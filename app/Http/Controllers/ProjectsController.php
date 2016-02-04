@@ -14,14 +14,16 @@ class ProjectsController extends Controller {
      */
     private $repository;
     private $service;
+    private $userId;
 
     public function __construct(ProjectRepository $repository, ProjectService $service) {
         $this->repository = $repository;
         $this->service = $service;
+        $this->userId = \Authorizer::getResourceOwnerId();
     }
 
     public function index() {
-        return $this->repository->all();
+        return $this->repository->findWhere(['owner_id' => $this->userId]);
     }
 
     public function store(Request $request) {
@@ -29,6 +31,9 @@ class ProjectsController extends Controller {
     }
 
     public function show($id) {
+        if ($this->checkProjectPermissios($id) == false) {
+            return ['error' => 'Access Denied! You must be the project owner or project member to access this resource'];
+        }
         return $this->repository->find($id);
     }
 
@@ -38,6 +43,24 @@ class ProjectsController extends Controller {
 
     public function update(Request $request, $id) {
         $this->service->update($request->all(), $id);
+    }
+
+    private function checkProjectOwner($projectId) {
+        $userId = \Authorizer::getResourceOwnerId();
+        return $this->repository->isOwner($projectId, $userId);
+    }
+
+    private function checkProjectMember($projectId) {
+        $userId = \Authorizer::getResourceOwnerId();
+        return $this->repository->isMember($projectId, $userId);
+    }
+
+    private function checkProjectPermissios($projectId) {
+        if ($this->checkProjectOwner($projectId) or $this->checkProjectMember($projectId)) {
+            return true;
+        }
+
+        return false;
     }
 
 }

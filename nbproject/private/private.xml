@@ -2,6 +2,17 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/D:/Projetos/codeproject/app/Http/routes.php</file>
+            <file>file:/D:/Projetos/codeproject/app/Presenters/ProjectPresenter.php</file>
+            <file>file:/D:/Projetos/codeproject/database/seeds/UserTableSeeder.php</file>
+            <file>file:/D:/Projetos/codeproject/app/Repositories/ProjectRepositoryEloquent.php</file>
+            <file>file:/D:/Projetos/codeproject/app/OAuth/Verifier.php</file>
+            <file>file:/D:/Projetos/codeproject/app/Http/Controllers/ProjectsController.php</file>
+            <file>file:/D:/Projetos/codeproject/app/Entities/Project.php</file>
+            <file>file:/D:/Projetos/codeproject/config/oauth2.php</file>
+            <file>file:/D:/Projetos/codeproject/config/app.php</file>
+            <file>file:/D:/Projetos/codeproject/app/Transformers/ProjectTransformer.php</file>
+        </group>
     </open-files>
 </project-private>
