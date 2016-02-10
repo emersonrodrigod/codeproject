@@ -1,11 +1,11 @@
-var app = angular.module('app', ['ngRoute', 'angular-oauth2', 'app.controllers','app.services']);
+var app = angular.module('app', ['ngRoute', 'angular-oauth2', 'app.controllers', 'app.services']);
 
 angular.module('app.controllers', ['ngMessages', 'angular-oauth2']);
 angular.module('app.services', ['ngResource']);
 
 app.provider('appConfig', function () {
     var config = {
-        baseUrl: 'http://localhost:8000'
+        baseUrl: 'http://localhost:8000/'
     };
 
     return {
@@ -16,8 +16,8 @@ app.provider('appConfig', function () {
     }
 });
 
-app.config(['$routeProvider', 'OAuthProvider','OAuthTokenProvider', 'appConfigProvider',
-    function ($routeProvider, OAuthProvider,OAuthTokenProvider, appConfigProvider) {
+app.config(['$routeProvider', 'OAuthProvider', 'OAuthTokenProvider', 'appConfigProvider',
+    function ($routeProvider, OAuthProvider, OAuthTokenProvider, appConfigProvider) {
         $routeProvider
             .when('/login', {
                 templateUrl: 'build/views/login.html',
@@ -26,11 +26,23 @@ app.config(['$routeProvider', 'OAuthProvider','OAuthTokenProvider', 'appConfigPr
             .when('/home', {
                 templateUrl: 'build/views/home.html',
                 controller: 'HomeController'
-            }).
-            when('/clients', {
+            })
+            .when('/clients', {
                 templateUrl: 'build/views/clients/list.html',
                 controller: 'ClientListController'
-        });
+            })
+            .when('/clients/new', {
+                templateUrl: 'build/views/clients/new.html',
+                controller: 'ClientNewController'
+            })
+            .when('/clients/:id/edit', {
+                templateUrl: 'build/views/clients/edit.html',
+                controller: 'ClientEditController'
+            })
+            .when('/clients/:id/remove', {
+                controller: 'ClientRemoveController',
+                method: 'remove'
+            });
 
 
         OAuthProvider.configure({
@@ -43,7 +55,7 @@ app.config(['$routeProvider', 'OAuthProvider','OAuthTokenProvider', 'appConfigPr
         OAuthTokenProvider.configure({
             name: 'token',
             options: {
-               secure: false
+                secure: false
             }
         });
     }]);

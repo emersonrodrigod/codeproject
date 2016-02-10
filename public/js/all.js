@@ -414,6 +414,178 @@ this.init=function(g,h){e=g,this.config=h,e.$render=function(){d.render()},b.ite
  */
 'use strict';angular.module('mgcrea.ngStrap.navbar',[]).provider('$navbar',function(){var t=this.defaults={activeClass:'active',routeAttr:'data-match-route',strict:!1};this.$get=function(){return{defaults:t}}}).directive('bsNavbar',['$window','$location','$navbar',function(t,a,r){var e=r.defaults;return{restrict:'A',link:function(t,r,n,i){var c=angular.copy(e);angular.forEach(Object.keys(e),function(t){angular.isDefined(n[t])&&(c[t]=n[t])}),t.$watch(function(){return a.path()},function(t,a){var e=r[0].querySelectorAll('li['+c.routeAttr+']');angular.forEach(e,function(a){var r=angular.element(a),e=r.attr(c.routeAttr).replace('/','\\/');c.strict&&(e='^'+e+'$');var n=new RegExp(e,'i');n.test(t)?r.addClass(c.activeClass):r.removeClass(c.activeClass)})})}}}]);
 //# sourceMappingURL=../modules/navbar.min.js.map
+/*
+ AngularJS v1.4.9
+ (c) 2010-2015 Google, Inc. http://angularjs.org
+ License: MIT
+*/
+(function(p,c,n){'use strict';function l(b,a,g){var d=g.baseHref(),k=b[0];return function(b,e,f){var g,h;f=f||{};h=f.expires;g=c.isDefined(f.path)?f.path:d;c.isUndefined(e)&&(h="Thu, 01 Jan 1970 00:00:00 GMT",e="");c.isString(h)&&(h=new Date(h));e=encodeURIComponent(b)+"="+encodeURIComponent(e);e=e+(g?";path="+g:"")+(f.domain?";domain="+f.domain:"");e+=h?";expires="+h.toUTCString():"";e+=f.secure?";secure":"";f=e.length+1;4096<f&&a.warn("Cookie '"+b+"' possibly not set or overflowed because it was too large ("+
+f+" > 4096 bytes)!");k.cookie=e}}c.module("ngCookies",["ng"]).provider("$cookies",[function(){var b=this.defaults={};this.$get=["$$cookieReader","$$cookieWriter",function(a,g){return{get:function(d){return a()[d]},getObject:function(d){return(d=this.get(d))?c.fromJson(d):d},getAll:function(){return a()},put:function(d,a,m){g(d,a,m?c.extend({},b,m):b)},putObject:function(d,b,a){this.put(d,c.toJson(b),a)},remove:function(a,k){g(a,n,k?c.extend({},b,k):b)}}}]}]);c.module("ngCookies").factory("$cookieStore",
+["$cookies",function(b){return{get:function(a){return b.getObject(a)},put:function(a,c){b.putObject(a,c)},remove:function(a){b.remove(a)}}}]);l.$inject=["$document","$log","$browser"];c.module("ngCookies").provider("$$cookieWriter",function(){this.$get=l})})(window,window.angular);
+//# sourceMappingURL=angular-cookies.min.js.map
+
+/*!
+	query-string
+	Parse and stringify URL query strings
+	https://github.com/sindresorhus/query-string
+	by Sindre Sorhus
+	MIT License
+*/
+(function () {
+	'use strict';
+	var queryString = {};
+
+	queryString.parse = function (str) {
+		if (typeof str !== 'string') {
+			return {};
+		}
+
+		str = str.trim().replace(/^(\?|#)/, '');
+
+		if (!str) {
+			return {};
+		}
+
+		return str.trim().split('&').reduce(function (ret, param) {
+			var parts = param.replace(/\+/g, ' ').split('=');
+			var key = parts[0];
+			var val = parts[1];
+
+			key = decodeURIComponent(key);
+			// missing `=` should be `null`:
+			// http://w3.org/TR/2012/WD-url-20120524/#collect-url-parameters
+			val = val === undefined ? null : decodeURIComponent(val);
+
+			if (!ret.hasOwnProperty(key)) {
+				ret[key] = val;
+			} else if (Array.isArray(ret[key])) {
+				ret[key].push(val);
+			} else {
+				ret[key] = [ret[key], val];
+			}
+
+			return ret;
+		}, {});
+	};
+
+	queryString.stringify = function (obj) {
+		return obj ? Object.keys(obj).map(function (key) {
+			var val = obj[key];
+
+			if (Array.isArray(val)) {
+				return val.map(function (val2) {
+					return encodeURIComponent(key) + '=' + encodeURIComponent(val2);
+				}).join('&');
+			}
+
+			return encodeURIComponent(key) + '=' + encodeURIComponent(val);
+		}).join('&') : '';
+	};
+
+	if (typeof define === 'function' && define.amd) {
+		define(function() { return queryString; });
+	} else if (typeof module !== 'undefined' && module.exports) {
+		module.exports = queryString;
+	} else {
+		self.queryString = queryString;
+	}
+})();
+
+!function(e,t){"function"==typeof define&&define.amd?define(["angular","query-string"],t):"object"==typeof exports?module.exports=t(require("angular"),require("query-string")):e.angularOAuth2=t(e.angular,e.queryString)}(this,function(e,t){function r(e){e.interceptors.push("oauthInterceptor")}function n(){var r;this.configure=function(t){if(r)throw new Error("Already configured.");if(!(t instanceof Object))throw new TypeError("Invalid argument: `config` must be an `Object`.");return r=e.extend({},c,t),e.forEach(s,function(e){if(!r[e])throw new Error("Missing parameter: "+e+".")}),"/"===r.baseUrl.substr(-1)&&(r.baseUrl=r.baseUrl.slice(0,-1)),"/"!==r.grantPath[0]&&(r.grantPath="/"+r.grantPath),"/"!==r.revokePath[0]&&(r.revokePath="/"+r.revokePath),r},this.$get=function(n,o){var a=function(){function a(){if(!r)throw new Error("`OAuthProvider` must be configured first.")}return u(a,null,{isAuthenticated:{value:function(){return!!o.getToken()},writable:!0,enumerable:!0,configurable:!0},getAccessToken:{value:function(a,i){if(!a||!a.username||!a.password)throw new Error("`user` must be an object with `username` and `password` properties.");var u={client_id:r.clientId,grant_type:"password",username:a.username,password:a.password};return null!==r.clientSecret&&(u.client_secret=r.clientSecret),u=t.stringify(u),i=e.extend({headers:{"Content-Type":"application/x-www-form-urlencoded"}},i),n.post(""+r.baseUrl+r.grantPath,u,i).then(function(e){return o.setToken(e.data),e})},writable:!0,enumerable:!0,configurable:!0},getRefreshToken:{value:function(){var e={client_id:r.clientId,grant_type:"refresh_token",refresh_token:o.getRefreshToken()};null!==r.clientSecret&&(e.client_secret=r.clientSecret),e=t.stringify(e);var a={headers:{"Content-Type":"application/x-www-form-urlencoded"}};return n.post(""+r.baseUrl+r.grantPath,e,a).then(function(e){return o.setToken(e.data),e})},writable:!0,enumerable:!0,configurable:!0},revokeToken:{value:function(){var e=t.stringify({token:o.getRefreshToken()?o.getRefreshToken():o.getAccessToken()}),a={headers:{"Content-Type":"application/x-www-form-urlencoded"}};return n.post(""+r.baseUrl+r.revokePath,e,a).then(function(e){return o.removeToken(),e})},writable:!0,enumerable:!0,configurable:!0}}),a}();return new a},this.$get.$inject=["$http","OAuthToken"]}function o(){var t={name:"token",options:{secure:!0}};this.configure=function(r){if(!(r instanceof Object))throw new TypeError("Invalid argument: `config` must be an `Object`.");return e.extend(t,r),t},this.$get=function(e){var r=function(){function r(){}return u(r,null,{setToken:{value:function(r){return e.putObject(t.name,r,t.options)},writable:!0,enumerable:!0,configurable:!0},getToken:{value:function(){return e.getObject(t.name)},writable:!0,enumerable:!0,configurable:!0},getAccessToken:{value:function(){return this.getToken()?this.getToken().access_token:void 0},writable:!0,enumerable:!0,configurable:!0},getAuthorizationHeader:{value:function(){return this.getTokenType()&&this.getAccessToken()?""+(this.getTokenType().charAt(0).toUpperCase()+this.getTokenType().substr(1))+" "+this.getAccessToken():void 0},writable:!0,enumerable:!0,configurable:!0},getRefreshToken:{value:function(){return this.getToken()?this.getToken().refresh_token:void 0},writable:!0,enumerable:!0,configurable:!0},getTokenType:{value:function(){return this.getToken()?this.getToken().token_type:void 0},writable:!0,enumerable:!0,configurable:!0},removeToken:{value:function(){return e.remove(t.name,t.options)},writable:!0,enumerable:!0,configurable:!0}}),r}();return new r},this.$get.$inject=["$cookies"]}function a(e,t,r){return{request:function(e){return r.getAuthorizationHeader()&&(e.headers=e.headers||{},e.headers.Authorization=r.getAuthorizationHeader()),e},responseError:function(n){return 400!==n.status||!n.data||"invalid_request"!==n.data.error&&"invalid_grant"!==n.data.error||(r.removeToken(),t.$emit("oauth:error",n)),(401===n.status&&n.data&&"invalid_token"===n.data.error||n.headers("www-authenticate")&&0===n.headers("www-authenticate").indexOf("Bearer"))&&t.$emit("oauth:error",n),e.reject(n)}}}var i=e.module("angular-oauth2",["ngCookies"]).config(r).factory("oauthInterceptor",a).provider("OAuth",n).provider("OAuthToken",o);r.$inject=["$httpProvider"];var u=function(e,t,r){t&&Object.defineProperties(e,t),r&&Object.defineProperties(e.prototype,r)},c={baseUrl:null,clientId:null,clientSecret:null,grantPath:"/oauth2/token",revokePath:"/oauth2/revoke"},s=["baseUrl","clientId","grantPath","revokePath"],u=function(e,t,r){t&&Object.defineProperties(e,t),r&&Object.defineProperties(e.prototype,r)};return a.$inject=["$q","$rootScope","OAuthToken"],i});
+angular.module('app.controllers').controller('HomeController', ['$scope', function ($scope) {
+
+}]);
+
+angular.module('app.controllers')
+    .controller('LoginController', ['$scope', 'OAuth', '$location', function ($scope, OAuth, $location) {
+        $scope.user = {
+            username: '',
+            password: ''
+        };
+
+        $scope.error = {
+            message: '',
+            error: false
+        }
+
+        $scope.login = function () {
+
+            if ($scope.form.$valid) {
+                OAuth.getAccessToken($scope.user).then(function () {
+                    $location.path('home');
+                }, function (data) {
+
+                    $scope.error.error = true;
+                    $scope.error.message = data.data.error_description;
+
+                });
+            }
+        }
+    }]);
+
+
+
+angular.module('app.services')
+    .service('Client', ['$resource', 'appConfig', function ($resource, appConfig) {
+        return $resource(appConfig.baseUrl + 'clients/:id', {id: '@id'},{
+            update: {
+                method: 'PUT'
+            }
+        });
+    }]);
+
+Estamos logados!
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="panel panel-default">
+                <div class="panel-heading">Login</div>
+                <div class="panel-body">
+                    <div class="alert alert-danger" ng-show="error.error">
+                        <strong>Whoops!</strong> Ocorreram erros na tentativa de login:<br><br>
+                        <div>
+                            {{error.message}}
+                        </div>
+                    </div>
+
+
+
+                    <form class="form-horizontal" name="form" role="form" method="POST" ng-submit="login()">
+
+                        <div class="form-group" ng-class="{'has-error' : !form.username.$valid && form.username.$touched}">
+                            <label class="col-md-4 control-label">E-Mail Address</label>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" name="username" ng-model="user.username" required>
+                                <div ng-messages="form.username.$error" class="help-block" ng-show="form.username.$touched">
+                                    <div ng-message="required">Campo obrigatório</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group" ng-class="{'has-error' : !form.password.$valid && form.password.$touched}">
+                            <label class="col-md-4 control-label">Password</label>
+                            <div class="col-md-6">
+                                <input type="password" class="form-control" name="password" ng-model="user.password" required>
+                                <div ng-messages="form.password.$error" class="help-block" ng-show="form.password.$touched">
+                                    <div ng-message="required">Campo obrigatório</div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <div class="col-md-6 col-md-offset-4">
+                                <button type="submit" class="btn btn-primary">Login</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -424,4 +596,275 @@ this.init=function(g,h){e=g,this.config=h,e.$render=function(){d.render()},b.ite
 
 </body>
 </html>
+angular.module('app.controllers')
+    .controller('ClientEditController', ['$scope','$routeParams', '$location', 'Client', function ($scope,$routeParams, $location, Client) {
+        $scope.client = Client.get({id: $routeParams.id});
+
+        $scope.save = function () {
+            if ($scope.form.$valid) {
+                Client.update({id: $scope.client.id}, $scope.client, function(){
+                    $location.path('/clients');
+                });
+            }
+        }
+    }]);
+
+angular.module('app.controllers')
+    .controller('ClientListController', ['$scope','Client', function ($scope, Client) {
+        $scope.clients = Client.query();
+
+    }]);
+
+
+
+
+angular.module('app.controllers')
+    .controller('ClientNewController', ['$scope', '$location', 'Client', function ($scope, $location, Client) {
+        $scope.client = new Client();
+
+        $scope.save = function () {
+            if ($scope.form.$valid) {
+
+                $scope.client.$save().then(function () {
+                    $location.path('/clients');
+                });
+            }
+        }
+    }]);
+
+angular.module('app.controllers')
+    .controller('ClientRemoveController', ['$scope','$routeParams', '$location', 'Client', function ($scope,$routeParams, $location, Client) {
+        $scope.client = Client.get({id: $routeParams.id});
+
+        $scope.remove = function () {
+
+            $scope.client.$delete().then(function(){
+                $location.path('/clients');
+            });
+        }
+    }]);
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="panel panel-default">
+                <div class="panel-heading">Edição de Clientes</div>
+                <div class="panel-body">
+                    <div class="alert alert-danger" ng-show="error.error">
+                        <strong>Whoops!</strong> Ocorreram erros na tentativa de login:<br><br>
+                        <div>
+                            {{error.message}}
+                        </div>
+                    </div>
+
+
+                    <form class="form-horizontal" name="form" role="form" method="POST" ng-submit="save()">
+
+                        <div class="form-group" ng-class="{'has-error' : !form.name.$valid && form.name.$touched}">
+                            <label class="col-md-4 control-label">Name</label>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" name="name" ng-model="client.name" required>
+                                <div ng-messages="form.name.$error" class="help-block" ng-show="form.name.$touched">
+                                    <div ng-message="required">Campo obrigatório</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group"
+                             ng-class="{'has-error' : !form.responsible.$valid && form.responsible.$touched}">
+                            <label class="col-md-4 control-label">Responsible</label>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" name="responsible" ng-model="client.responsible"
+                                       required>
+                                <div ng-messages="form.responsible.$error" class="help-block"
+                                     ng-show="form.responsible.$touched">
+                                    <div ng-message="required">Campo obrigatório</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group" ng-class="{'has-error' : !form.email.$valid && form.email.$touched}">
+                            <label class="col-md-4 control-label">E-mail</label>
+                            <div class="col-md-6">
+                                <input type="email" class="form-control" name="email" ng-model="client.email" required>
+                                <div ng-messages="form.email.$error" class="help-block" ng-show="form.email.$touched">
+                                    <div ng-message="required">Campo obrigatório</div>
+                                    <div ng-message="email">Email invalido</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group" ng-class="{'has-error' : !form.phone.$valid && form.phone.$touched}">
+                            <label class="col-md-4 control-label">Phone</label>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" name="phone" ng-model="client.phone" required>
+                                <div ng-messages="form.phone.$error" class="help-block" ng-show="form.phone.$touched">
+                                    <div ng-message="required">Campo obrigatório</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group"
+                             ng-class="{'has-error' : !form.address.$valid && form.address.$touched}">
+                            <label class="col-md-4 control-label">address</label>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" name="address" ng-model="client.address"
+                                       required>
+                                <div ng-messages="form.address.$error" class="help-block"
+                                     ng-show="form.address.$touched">
+                                    <div ng-message="required">Campo obrigatório</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group" ng-class="{'has-error' : !form.obs.$valid && form.obs.$touched}">
+                            <label class="col-md-4 control-label">Obs</label>
+                            <div class="col-md-6">
+                               <textarea name="obs" ng-model="client.obs" class="form-control"></textarea>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <div class="col-md-6 col-md-offset-4">
+                                <button type="submit" class="btn btn-primary">Cadastrar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="panel panel-default">
+                <div class="panel-heading">Listagem de clientes</div>
+                <div class="panel-body">
+                   <table class="table table-striped">
+                       <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Responsible</th>
+                                <th>email</th>
+                                <th>Phone</th>
+                                <th>Ações</th>
+                            </tr>
+                       </thead>
+                       <tbody>
+
+                            <tr ng-repeat="o in clients">
+                                <td>{{o.name}}</td>
+                                <td>{{o.responsible}}</td>
+                                <td>{{o.email}}</td>
+                                <td>{{o.phone}}</td>
+                                <td>
+                                    <a ng-href="#/clients/{{o.id}}/edit">Editar</a>
+                                    <a ng-href="#/clients/{{o.id}}/remove">Editar</a>
+                                </td>
+                            </tr>
+                       </tbody>
+                   </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="panel panel-default">
+                <div class="panel-heading">Cadastro</div>
+                <div class="panel-body">
+                    <div class="alert alert-danger" ng-show="error.error">
+                        <strong>Whoops!</strong> Ocorreram erros na tentativa de login:<br><br>
+                        <div>
+                            {{error.message}}
+                        </div>
+                    </div>
+
+
+                    <form class="form-horizontal" name="form" role="form" method="POST" ng-submit="save()">
+
+                        <div class="form-group" ng-class="{'has-error' : !form.name.$valid && form.name.$touched}">
+                            <label class="col-md-4 control-label">Name</label>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" name="name" ng-model="client.name" required>
+                                <div ng-messages="form.name.$error" class="help-block" ng-show="form.name.$touched">
+                                    <div ng-message="required">Campo obrigatório</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group"
+                             ng-class="{'has-error' : !form.responsible.$valid && form.responsible.$touched}">
+                            <label class="col-md-4 control-label">Responsible</label>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" name="responsible" ng-model="client.responsible"
+                                       required>
+                                <div ng-messages="form.responsible.$error" class="help-block"
+                                     ng-show="form.responsible.$touched">
+                                    <div ng-message="required">Campo obrigatório</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group" ng-class="{'has-error' : !form.email.$valid && form.email.$touched}">
+                            <label class="col-md-4 control-label">E-mail</label>
+                            <div class="col-md-6">
+                                <input type="email" class="form-control" name="email" ng-model="client.email" required>
+                                <div ng-messages="form.email.$error" class="help-block" ng-show="form.email.$touched">
+                                    <div ng-message="required">Campo obrigatório</div>
+                                    <div ng-message="email">Email invalido</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group" ng-class="{'has-error' : !form.phone.$valid && form.phone.$touched}">
+                            <label class="col-md-4 control-label">Phone</label>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" name="phone" ng-model="client.phone" required>
+                                <div ng-messages="form.phone.$error" class="help-block" ng-show="form.phone.$touched">
+                                    <div ng-message="required">Campo obrigatório</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group"
+                             ng-class="{'has-error' : !form.address.$valid && form.address.$touched}">
+                            <label class="col-md-4 control-label">address</label>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" name="address" ng-model="client.address"
+                                       required>
+                                <div ng-messages="form.address.$error" class="help-block"
+                                     ng-show="form.address.$touched">
+                                    <div ng-message="required">Campo obrigatório</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group" ng-class="{'has-error' : !form.obs.$valid && form.obs.$touched}">
+                            <label class="col-md-4 control-label">Obs</label>
+                            <div class="col-md-6">
+                               <textarea name="obs" ng-model="client.obs" class="form-control"></textarea>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <div class="col-md-6 col-md-offset-4">
+                                <button type="submit" class="btn btn-primary">Cadastrar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 //# sourceMappingURL=all.js.map
